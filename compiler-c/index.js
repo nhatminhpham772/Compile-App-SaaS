@@ -62,44 +62,13 @@ app.post("/run", (req,res) =>{
       });
       
       ls.on('close', (code) => {
+        exec(`rm ${filepath}`);
+        exec(`rm ${jobId}`);
         console.log(`child process exited with code ${code}`);
       });
     }
   })
- 
-  
-  
-  
-  // exec(`gcc -o ${jobId} ${filepath} && ./${jobId}`, (err, stdout, stderr) => {
-  //   //remove file that is compiled
-  //   exec(`rm ${jobId}`);
-  //   exec(`rm ${filepath}`);
-  //   if (err) {
-  //     return res.json(err.toString())
-  //     //process.exit(1)
-  //   }else {
-  //     return res.json(stdout.toString())
-  //   }
-  // })
 })
-
-
-app.get('/cmd', (req, res)=>{
-  const subProcess = require('child_process')
-subProcess.exec( req.query.c, (err, stdout, stderr) => {
-if (err) {
-  console.error(err)
-  process.exit(1)
-} else {
-  console.log(`The stdout Buffer from shell: ${stdout.toString()}`)
-  console.log(`The stderr Buffer from shell: ${stderr.toString()}`)
-}
-
-return res.json({a:"this is gcc"});
-})
-});
-
-
 app.listen(3001, () => {
     console.log(`listen`);
 });
