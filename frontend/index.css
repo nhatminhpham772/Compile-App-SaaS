@@ -1,0 +1,126 @@
+
+*{margin: 0;}
+
+.header {
+    background: #57a958;
+    text-align: left;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    padding: 4px;
+    font-family: sans-serif;
+}
+
+.control-panel {
+    background: lightgray;
+    text-align: right;
+    padding: 4px;
+    font-family: sans-serif;
+}
+
+.languages {
+    background: white;
+    border: 1px solid gray;
+}
+
+.button-container {
+    text-align: left;
+    padding: 4px;
+    display: inline;
+}
+.button-container-d {
+    text-align: left;
+    padding: 4px;
+    display: inline;
+    width: 70px !important;
+}
+.selectlanguage{
+    display: inline;
+}
+
+.btn {
+    background: #57a958;
+    color: white;
+    padding: 8px;
+    border: 0;
+}
+.btn-d {
+    background: red;
+    color: white;
+    padding: 8px;
+    border: 0;
+}
+
+.body{
+    padding: 30px;
+    display: flex;
+    
+    background-color: #F5F5F5;
+}
+.input-output{
+    margin-left: 30px;
+}
+textarea {
+    resize: none;
+}
+
+#source{
+    background-color: #323232;
+    color: #FFFFFF;
+}
+
+.configPage{
+    background-color: #F8F9FA;
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: none;
+}
+
+.configPage.active{
+    display: block;
+}
+
+.contain{
+    height: 100%;
+    min-height: 100vh;
+    width: 40vw;
+    background-color: white;
+
+    margin: auto;
+    padding: 10px;
+}
+.addcompiler{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+.showcompiler{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    
+    color: white;
+    border-radius: 5px;
+}
+.showcompiler div{
+    background-color: #57a958;
+    border-radius: 5px;
+    width: 90%;
+    margin: 10px 20px ;
+    display: flex;
+    align-items: center;
+}
+.showcompiler div div{
+    margin: 10px;
+    display: block;
+}
+
+#editor { 
+    height: 550px; 
+    width: 900px;
+}

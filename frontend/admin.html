@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <div className="configPage " id="configPage">
+        <div class="header">CONFIGURATION </div>
+        <div class="control-panel">
+          <div class="button-container">
+              <button class="btn btn-save" >Save </button>
+          </div>
+          <div class="button-container">
+              <button class="btn btn-cancel" > Refresh </button>
+          </div>
+          <div class="contain">
+            <div class = "addcompiler">
+              <h3>Add new language</h3><br/>
+              <div>
+              <a>name:  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</a>
+              <input id="name"></input>
+              </div><br/>
+              <div>
+              <a>link container:  &nbsp;</a>
+              <input id="container"></input><br/><br/>
+              <button class="btn btn-add"> Add </button><br/><br/><br/>
+              
+              </div>
+            </div>
+  
+            <div class = "showcompiler">
+              <!-- danh sách container -->
+  
+            </div>
+          </div>
+        </div>      
+        </div>
+      </div>
+
+      <script>
+        $(document).ready(async function () {
+          //lấy data các container từ file cấu hình
+          let languages = await getLanguages();
+  
+          //Thêm vào danh sách các container hiện có
+          $.each(languages, function( index, value ) {
+            $('.showcompiler').append(`
+                  <div class="container">
+                    <div>
+                      <div>
+                        <a>name: </a><a class="container-name">${value.name}</a><br/>
+                      </div>
+                      <div>
+                          <a>link container: </a><a class="container-link">${value.linkContainer} </a>
+                      </div>
+                    </div>
+                    
+                    <div class="button-container-d">
+                        <button class="btn-d btn-delete"> Delete </button>
+                    </div>
+                  </div>`)
+          });
+        });
+  
+        function getLanguages() {
+            return new Promise((resolve) => {
+              fetch("http://localhost:3000/read-custom-config")
+                .then((response) => response.json())
+                .then((data) => {
+                  let language = data;
+                  console.log("data", language)
+                  resolve(language);
+                });
+            });
+          }
+
+          $(document).on('click', '.btn-cancel', function(){
+            let url = location.protocol + '//' + location.host + "/admin"
+            window.location.replace(url);
+          });
+
+          $(document).on('click', '.btn-add', function(){
+            let name = $('#name');
+            let container = $('#container');
+            $('.showcompiler').append(`
+                  <div class="container">
+                    <div>
+                      <div>
+                        <a>name: </a><a class="container-name">${name.val()}</a><br/>
+                      </div>
+                      <div>
+                          <a>link container: </a><a class="container-link">${container.val()} </a>
+                      </div>
+                    </div>
+                    
+                    <div class="button-container-d">
+                        <button class="btn-d btn-delete"> Delete </button>
+                    </div>
+                  </div>`)
+                  name.val('')
+                  container.val('')
+          });
+
+          $(document).on('click', '.btn-delete', function(){
+            $(this).closest('.container').remove();
+          });
+
+          $(document).on('click', '.btn-save', function(){
+            let container = $('.container');
+            let languages = [];
+            //console.log($(container).eq(0).find('.container-name').length)
+            $.each(container, function( index, value ) {
+              let name = $(value).find('.container-name').text()
+              let link = $(value).find('.container-link').text() 
+              languages.push({"name":name,"linkContainer":link})
+            });
+
+            fetch('http://localhost:3000/edit-custom-config', {
+              method: 'POST', 
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({"languages":languages}),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                console.log('Success:', data);
+                let url = location.protocol + '//' + location.host + "/admin"
+                window.location.replace(url);
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+              });
+          });
+      </script>
+  </body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="App" id="App">
+      <div class="header">IDE ONLINE</div>
+      <div class="control-panel">
+        <div class="button-container">
+          <button class="btn btn-compile" >Run</button>
+        </div>
+        <div class="selectlanguage">
+          Select Language: &nbsp; &nbsp;
+          <select id="languages" class="languages" >
+
+          </select>
+        </div>
+      </div>
+      <div class="body">
+        <div class="source">
+          <p>Source:</p>
+          <div class="editor" id="editor"></div>
+          <!-- <textarea id="source" name="source" rows="36" cols="120"></textarea> -->
+        </div>
+        <div class="input-output">
+          <p>Input:</p>
+          <textarea id="input" name="input" rows="17" cols="70"></textarea>
+          <p>Output:</p>
+          <textarea id="output" name="output" rows="17" cols="70" readonly></textarea>
+        </div>
+      </div>
+    </div>
+    <!-- UI -->
+    <script src="js/lib/ace.js"></script>
+    <script src="js/lib/theme-monokai.js"></script>
+
+    <script>
+      
+      let editor;
+      $(document).ready(async function () {
+        editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monokai");
+
+        //lấy data các container từ file cấu hình
+        let languages = await getLanguages();
+
+        //Thêm vào lựa chọn ngôn ngữ để biên dịch
+        $.each(languages, function( index, value ) {
+          $('#languages').append(`<option id="option" value="${value.linkContainer}">${value.name}</option>`)
+        });
+
+        //UI
+        let selectedLanguage = $('#languages option:selected').text();
+        if(selectedLanguage == 'C' || selectedLanguage == 'Cpp')editor.session.setMode("ace/mode/c_cpp");
+        else if(selectedLanguage == 'Python')editor.session.setMode("ace/mode/python");
+        
+      });
+      // lấy danh sách ngôn ngữ và link tới container của file config
+      function getLanguages() {
+          return new Promise((resolve) => {
+            let url = location.protocol + '//' + location.host + "/read-custom-config"
+            fetch(url)
+              .then((response) => response.json())
+              .then((data) => {
+                let language = data;
+                console.log("data", language)
+                resolve(language);
+              });
+          });
+        }
+        //biên dịch
+      $(document).on('click', '.btn-compile', function(){
+        
+        let source = editor.getSession().getValue()
+        let linkContainer = document.getElementById("languages").value
+        let output = document.getElementById("output")
+        let input = document.getElementById("input").value
+        
+        fetch(linkContainer, {
+          method: "POST", 
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({"code":source,"input":input}),
+        })
+        .then((response) =>{ 
+          if(response.status === 200){
+            console.log('success')
+          }
+          else{
+            alert("Fail")
+          }
+          response.json().then((data) => {
+            //console.log('Success:', data);
+            output.value = data
+          })
+        })
+          .catch((error) => {
+            alert("Lỗi kết nối! Không tìm thấy " + linkContainer)
+          });   
+      })
+    
+      $(document).on('change', '#languages', function(){
+        let selectedLanguage = $('#languages option:selected').text();
+        if(selectedLanguage == 'C' || selectedLanguage == 'Cpp')editor.session.setMode("ace/mode/c_cpp");
+        else if(selectedLanguage == 'Python')editor.session.setMode("ace/mode/python");
+      })
+    </script>
+
+    <!--  UI -->
+    
+    <script>
+      
+      // window.onload = function() {
+      //   let language = document.getElementById("languages").textContent
+      //   console.log(language)
+      //   editor = ace.edit("editor");
+      //   editor.setTheme("ace/theme/monokai");
+      //   if(language == 'c' || language == 'cpp')editor.session.setMode("ace/mode/c_cpp");
+      //   else if(language == 'python')editor.session.setMode("ace/mode/python");
+      // }
+
+
+    </script>
+  </body>
+</html>
