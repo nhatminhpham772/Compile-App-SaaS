@@ -69,7 +69,8 @@
   
         function getLanguages() {
             return new Promise((resolve) => {
-              fetch("http://localhost:3000/read-custom-config")
+              let url = location.protocol + '//' + location.host + "/read-custom-config"
+              fetch(url)
                 .then((response) => response.json())
                 .then((data) => {
                   let language = data;
@@ -119,8 +120,8 @@
               let link = $(value).find('.container-link').text() 
               languages.push({"name":name,"linkContainer":link})
             });
-
-            fetch('http://localhost:3000/edit-custom-config', {
+            let url = location.protocol + '//' + location.host + "/edit-custom-config"
+            fetch(url, {
               method: 'POST', 
               headers: {
                 'Content-Type': 'application/json',
